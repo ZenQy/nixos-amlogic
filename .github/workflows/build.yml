@@ -11,11 +11,7 @@ on:
           - x96maxplus
         required: true
         default: n1
-      debug_enabled:
-        type: boolean
-        description: "Run the build with tmate debugging enabled"
-        required: false
-        default: false
+
 env:
   NIX_PATH: nixpkgs=channel:nixos-unstable
   TZ: Asia/Shanghai
@@ -43,22 +39,22 @@ jobs:
             substituters = https://zenqy.cachix.org/ https://cache.nixos.org/
             system-features = benchmark big-parallel nixos-test uid-range kvm
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-
       - name: build image
         run: |
           echo "DATE=$(date +"%Y.%m%d.%H%M")" >> $GITHUB_ENV
           nix build .#${{ inputs.host }}
-
+          ech0 '-------------'
+          ls result
+          if [[ -d result/sd-image ]]; then
+            ls result/sd-image
+          fi
       - name: Upload Image To Release
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           removeArtifacts: true
           tag: v${{ env.DATE }}
-          artifacts: "result/*"
+          artifacts: "result/*/*"
           body: |
             image:${{ inputs.host }}
 
