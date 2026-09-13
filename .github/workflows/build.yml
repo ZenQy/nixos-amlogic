@@ -11,6 +11,11 @@ on:
           - x96maxplus
         required: true
         default: n1
+      debug_enabled:
+        type: boolean
+        description: "Run the build with tmate debugging enabled"
+        required: false
+        default: false
 env:
   NIX_PATH: nixpkgs=channel:nixos-unstable
   TZ: Asia/Shanghai
@@ -37,6 +42,10 @@ jobs:
             trusted-public-keys = zenqy.cachix.org-1:G5csLBsu/kQIOXU7XUiqeMacwzN1WQWv0+GysTVmJgo= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
             substituters = https://zenqy.cachix.org/ https://cache.nixos.org/
             system-features = benchmark big-parallel nixos-test uid-range kvm
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
       - name: build image
         run: |
