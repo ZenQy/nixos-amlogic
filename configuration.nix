@@ -7,6 +7,7 @@
 {
 
   boot = {
+    consoleLogLevel = 7;
     initrd.allowMissingModules = true;
     initrd.systemd.tpm2.enable = false;
     loader.grub.enable = false;

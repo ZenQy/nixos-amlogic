@@ -1,31 +1,30 @@
-{ modulesPath, ... }:
+{ config, modulesPath, ... }:
 
 {
   imports = [
-    (modulesPath + "/installer/sd-card/sd-image-aarch64.nix")
+    (modulesPath + "/profiles/base.nix")
+    (modulesPath + "/installer/sd-card/sd-image.nix")
   ];
 
   # 3. 自定义 SD 卡镜像行为
   sdImage = {
     populateFirmwareCommands = "";
+    populateRootCommands = ''
+      mkdir -p ./files/boot
+      cp ${./emmc_autoscript} ${./uboot} ./files/boot
+      ${config.boot.loader.generic-extlinux-compatible.populateCmd} -c ${config.system.build.toplevel} -d ./files/boot
+    '';
     postBuildCommands = ''
-      echo '----------'
-      ls
-      cd $out
-      echo '----------'
-      ls
-      echo '----------'
-      ls $img
-      dd if=${./u-boot.bin} of=$img conv=fsync,notrunc bs=1 count=444
-      dd if=${./u-boot.bin} of=$img conv=fsync,notrunc bs=512 skip=1 seek=1
+      dd if=${./uboot} of=$img conv=fsync,notrunc bs=1 count=444
+      dd if=${./uboot} of=$img conv=fsync,notrunc bs=512 skip=1 seek=1
     '';
   };
-  image.baseName = "phicomm-n1";
+  image.baseName = "tx3";
 
   hardware.deviceTree = {
     enable = true;
     name = "amlogic/meson-sm1-x96-air-gbit.dtb";
-    filter = "*x96*.dtb";
+    filter = "*x96-air*.dtb";
   };
 
   systemd.network.networks.eth0 = {
