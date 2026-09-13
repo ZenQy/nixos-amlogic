@@ -43,7 +43,7 @@ jobs:
         run: |
           echo "DATE=$(date +"%Y.%m%d.%H%M")" >> $GITHUB_ENV
           nix build .#${{ inputs.host }}
-          ech0 '-------------'
+          echo '-------------'
           ls result
           if [[ -d result/sd-image ]]; then
             ls result/sd-image
