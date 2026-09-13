@@ -6,11 +6,10 @@ on:
         type: choice
         description: "选择编译的镜像"
         options:
-          - n1
           - tx3
           - x96maxplus
         required: true
-        default: n1
+        default: tx3
 
 env:
   NIX_PATH: nixpkgs=channel:nixos-unstable
@@ -43,18 +42,14 @@ jobs:
         run: |
           echo "DATE=$(date +"%Y.%m%d.%H%M")" >> $GITHUB_ENV
           nix build .#${{ inputs.host }}
-          echo '-------------'
-          ls result
-          if [[ -d result/sd-image ]]; then
-            ls result/sd-image
-          fi
+
       - name: Upload Image To Release
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           removeArtifacts: true
           tag: v${{ env.DATE }}
-          artifacts: "result/*/*"
+          artifacts: "result/sd-image/*.img.zst"
           body: |
             image:${{ inputs.host }}
 

@@ -8,13 +8,24 @@
   # 3. 自定义 SD 卡镜像行为
   sdImage = {
     populateFirmwareCommands = "";
+    postBuildCommands = ''
+      echo '----------'
+      ls
+      cd $out
+      echo '----------'
+      ls
+      echo '----------'
+      ls $img
+      dd if=${./u-boot.bin} of=$img conv=fsync,notrunc bs=1 count=444
+      dd if=${./u-boot.bin} of=$img conv=fsync,notrunc bs=512 skip=1 seek=1
+    '';
   };
-  image.fileName = "nixos-phicomm-n1.img";
+  image.baseName = "phicomm-n1";
 
   hardware.deviceTree = {
     enable = true;
-    name = "amlogic/meson-gxl-s905d-phicomm-n1.dtb";
-    filter = "*phicomm*.dtb";
+    name = "amlogic/meson-sm1-x96-air-gbit.dtb";
+    filter = "*x96*.dtb";
   };
 
   systemd.network.networks.eth0 = {
