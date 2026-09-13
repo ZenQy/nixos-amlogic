@@ -1,5 +1,5 @@
 {
-  description = "Clean Native NixOS BIOS/MBR raw image builder";
+  description = "NixOS image of Amlogic Devices";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -12,7 +12,6 @@
         filter
         attrNames
         readDir
-        concatMap
         listToAttrs
         ;
       floder =
@@ -22,47 +21,26 @@
         in
         filter (name: files.${name} == "directory") (attrNames files);
 
-      hosts = concatMap (
-        dir:
-        map (subdir: {
-          inherit dir;
-          name = subdir;
-        }) (floder ./hosts/${dir})
-      ) (floder ./hosts);
-
-      nixos = listToAttrs (
-        map (host: {
-          name = host.name;
-          value = nixpkgs.lib.nixosSystem {
-            system = host.dir;
-            modules = [
-              ./configuration.nix
-              ./hosts/${host.dir}/${host.name}
-            ];
-          };
-        }) hosts
-      );
-
-      image =
-        platforms:
-        listToAttrs (
-          map (platform: {
-            name = platform;
-            value = listToAttrs (
-              map (host: {
-                name = host;
-                value = self.nixosConfigurations.${host}.config.system.build.vpsImage;
-              }) (floder ./hosts/${platform})
-            );
-          }) platforms
-        );
     in
     {
-      nixosConfigurations = nixos;
+      nixosConfigurations = listToAttrs (
+        map (host: {
+          name = host;
+          value = nixpkgs.lib.nixosSystem {
+            system = "aarch64-linux";
+            modules = [
+              ./configuration.nix
+              ./devices/${host}
+            ];
+          };
+        }) (floder ./devices)
+      );
 
-      packages = image [
-        "aarch64-linux"
-        "x86_64-linux"
-      ];
+      packages.aarch64-linux = listToAttrs (
+        map (host: {
+          name = host;
+          value = self.nixosConfigurations.${host}.config.system.build.sdImage;
+        }) (floder ./devices)
+      );
     };
 }

@@ -5,12 +5,23 @@
 }:
 
 {
-  boot.initrd.allowMissingModules = true;
-  boot.kernelParams = [
-    "audit=0"
-    "net.ifnames=0"
-  ];
-  boot.growPartition = true;
+
+  boot = {
+    initrd.allowMissingModules = true;
+    initrd.systemd.tpm2.enable = false;
+    loader.grub.enable = false;
+    loader.generic-extlinux-compatible.enable = true;
+    loader.generic-extlinux-compatible.configurationLimit = 2;
+    growPartition = true;
+    kernelParams = [
+      "console=ttyAML0,115200n8"
+      "console=tty0"
+      "audit=0"
+      "net.ifnames=0"
+    ];
+    # kernelPackages = pkgs.linuxPackages_latest;
+    # supportedFilesystems.zfs = false;
+  };
 
   nix.extraOptions = "experimental-features = nix-command flakes";
 
@@ -25,7 +36,7 @@
 
   networking.firewall.enable = false;
   networking.useDHCP = false;
-  networking.hostName = "nixos-vps";
+  networking.hostName = "Amlogic";
   systemd.network.enable = true;
   services.openssh = {
     enable = true;
@@ -40,8 +51,8 @@
   };
   services.resolved.enable = false;
   networking.nameservers = [
-    "2606:4700:4700::1111"
-    "1.1.1.1"
+    "2400:3200::1"
+    "114.114.114.114"
   ];
 
   time.timeZone = "Asia/Shanghai";
