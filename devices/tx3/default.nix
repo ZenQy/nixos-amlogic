@@ -11,7 +11,8 @@
     populateFirmwareCommands = "";
     populateRootCommands = ''
       mkdir -p ./files/boot
-      cp ${./emmc_autoscript} ${./uboot} ./files/boot
+      cp ${./emmc_autoscript} ./files/boot/emmc_autoscript
+      cp ${./uboot} ./files/boot/uboot
       ${config.boot.loader.generic-extlinux-compatible.populateCmd} -c ${config.system.build.toplevel} -d ./files/boot
     '';
     postBuildCommands = ''
