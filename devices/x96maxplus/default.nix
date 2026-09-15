@@ -1,6 +1,8 @@
-{ ... }:
+{ config, modulesPath, ... }:
+
 let
   amlogic = import ../amlogic.nix {
+    inherit config modulesPath;
     u-boot = ../u-boot-x96maxplus.bin;
     bootloader = ../x96maxplus-u-boot.bin.sd.bin;
   };

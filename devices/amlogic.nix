@@ -14,7 +14,7 @@
 
   sdImage = {
     populateFirmwareCommands = ''
-      cp ${./emmc_autoscript} firmware/emmc_autoscript
+      cp ${./aml_autoscript} firmware/aml_autoscript
       cp ${u-boot} firmware/u-boot.bin
     '';
     populateRootCommands = ''
