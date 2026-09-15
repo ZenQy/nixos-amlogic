@@ -19,7 +19,7 @@
         let
           files = readDir dir;
         in
-        filter (name: files.${name} == "directory") (attrNames files);
+        filter (name: (files.${name} == "directory") && (name != "dtbs")) (attrNames files);
 
     in
     {
@@ -31,6 +31,7 @@
             modules = [
               ./configuration.nix
               ./devices/${host}
+              { networking.hostName = host; }
             ];
           };
         }) (floder ./devices)

@@ -37,7 +37,6 @@
 
   networking.firewall.enable = false;
   networking.useDHCP = false;
-  networking.hostName = "Amlogic";
   systemd.network.enable = true;
   services.openssh = {
     enable = true;
